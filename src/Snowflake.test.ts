@@ -181,7 +181,7 @@ describe('Snowflake', () => {
     });
     Snowflake.setMachineId(0);
 
-    for (let i = 0; i <= maxSequenceNumber; i++) {
+    for (let i = 0; i <= maxSequenceNumber; i += 1) {
       const snowflake = Snowflake.generate();
 
       if (i === maxSequenceNumber) {

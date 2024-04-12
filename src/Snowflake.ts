@@ -29,13 +29,19 @@ export function generateSnowflake({
   const MAX_POSSIBLE_INCREMENT = BigInt(2 ** sequenceNumberBitAmount - 1);
   const MAX_MACHINE_ID = BigInt(2 ** machineIdBitAmount - 1);
 
-  const MACHINE_ID_SHIFT_AMOUNT = BigInt(
-    machineIdBitAmount === sequenceNumberBitAmount
-      ? machineIdBitAmount
-      : machineIdBitAmount > sequenceNumberBitAmount
-      ? machineIdBitAmount - machineIdBitAmount + sequenceNumberBitAmount
-      : machineIdBitAmount + sequenceNumberBitAmount - machineIdBitAmount
-  );
+  let MACHINE_ID_SHIFT_AMOUNT: bigint;
+
+  if (machineIdBitAmount === sequenceNumberBitAmount) {
+    MACHINE_ID_SHIFT_AMOUNT = BigInt(machineIdBitAmount);
+  } else if (machineIdBitAmount > sequenceNumberBitAmount) {
+    MACHINE_ID_SHIFT_AMOUNT = BigInt(
+      machineIdBitAmount - machineIdBitAmount + sequenceNumberBitAmount
+    );
+  } else {
+    MACHINE_ID_SHIFT_AMOUNT = BigInt(
+      machineIdBitAmount + sequenceNumberBitAmount - machineIdBitAmount
+    );
+  }
 
   let INCREMENT = 0n;
   let MACHINE_ID: bigint | null = null;
@@ -101,7 +107,7 @@ export function generateSnowflake({
         (MACHINE_ID << MACHINE_ID_SHIFT_AMOUNT) |
         INCREMENT;
 
-      INCREMENT++;
+      INCREMENT += 1n;
 
       return result.toString();
     }
