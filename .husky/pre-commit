@@ -1,1 +1,1 @@
-pnpm test
+npx pretty-quick --staged && npm run lint && npm run test
