@@ -1,4 +1,4 @@
-# ❄️ [@burakbey/snowflake](http://npmjs.com/package/@burakbey/snowflake)
+# ❄️ [@burakbey/snowflake](https://npmjs.com/package/@burakbey/snowflake)
 
 This library provides an easy-to-use implementation of [Snowflake](https://en.wikipedia.org/wiki/Snowflake_ID) for generating unique, distributed IDs.
 
@@ -58,7 +58,7 @@ const snowflake3 = Snowflake.generate(
 ); // Accepts timestamps
 
 // Deconstruct a Snowflake
-const info = Snowflake.deconstruct(snowflake3); // you can inspect a snowflake
+const info = Snowflake.deconstruct(snowflake3);
 
 console.log(snowflake1); // 566390217229991936
 console.log(snowflake2); // 276839760016703489
