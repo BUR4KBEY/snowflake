@@ -7,10 +7,10 @@ export interface SnowflakeOptions {
 export interface SnowflakeDeconstructResult {
   timestamp: number;
   date: Date;
-  machineId: number;
+  machineId: number | null;
   increment: number;
   timestampBits: string;
-  machineIdBits: string;
+  machineIdBits: string | null;
   incrementBits: string;
   allBits: string;
 }
@@ -26,22 +26,18 @@ export function generateSnowflake({
   if (sequenceNumberBitAmount < 0)
     throw new Error('"sequenceNumberBitAmount" cannot be negative.');
 
+  if (sequenceNumberBitAmount === 0)
+    throw new Error(
+      'You must provide at least one bit for the sequence number to ensure unique Snowflake generation.'
+    );
+
   const MAX_POSSIBLE_INCREMENT = BigInt(2 ** sequenceNumberBitAmount - 1);
   const MAX_MACHINE_ID = BigInt(2 ** machineIdBitAmount - 1);
 
-  let MACHINE_ID_SHIFT_AMOUNT: bigint;
-
-  if (machineIdBitAmount === sequenceNumberBitAmount) {
-    MACHINE_ID_SHIFT_AMOUNT = BigInt(machineIdBitAmount);
-  } else if (machineIdBitAmount > sequenceNumberBitAmount) {
-    MACHINE_ID_SHIFT_AMOUNT = BigInt(
-      machineIdBitAmount - machineIdBitAmount + sequenceNumberBitAmount
-    );
-  } else {
-    MACHINE_ID_SHIFT_AMOUNT = BigInt(
-      machineIdBitAmount + sequenceNumberBitAmount - machineIdBitAmount
-    );
-  }
+  const MACHINE_ID_SHIFT_AMOUNT: bigint =
+    machineIdBitAmount === sequenceNumberBitAmount
+      ? BigInt(machineIdBitAmount)
+      : BigInt(sequenceNumberBitAmount);
 
   let INCREMENT = 0n;
   let MACHINE_ID: bigint | null = null;
@@ -59,7 +55,9 @@ export function generateSnowflake({
       return sequenceNumberBitAmount;
     }
 
-    static get machineId() {
+    static get machineId(): number | null {
+      if (machineIdBitAmount === 0) return null;
+
       if (MACHINE_ID === null)
         throw new Error(
           'Machine id has not been set. Please use the "Snowflake.setMachineId()" method to specify a machine id before generating snowflakes.'
@@ -69,6 +67,11 @@ export function generateSnowflake({
     }
 
     static setMachineId(id: number) {
+      if (machineIdBitAmount === 0)
+        throw new Error(
+          `You cannot set a machine id with 0 bits. Please avoid using "Snowflake.setMachineId()" method and instead use the "Snowflake.generate()" method directly to generate snowflakes.`
+        );
+
       if (MACHINE_ID !== null)
         throw new Error(
           'Machine id has already been set. It cannot be set more than once.'
@@ -84,13 +87,19 @@ export function generateSnowflake({
       MACHINE_ID = BigInt(id);
     }
 
-    static generate(timestamp: Date | number = Date.now()): string {
-      if (MACHINE_ID === null)
+    static getTimestamp(dateOrTimestamp: Date | number): number {
+      if (dateOrTimestamp instanceof Date) return dateOrTimestamp.getTime();
+
+      return dateOrTimestamp;
+    }
+
+    static generate(dateOrTimestamp: Date | number = Date.now()): string {
+      if (MACHINE_ID === null && machineIdBitAmount !== 0)
         throw new Error(
           'Machine id has not been set. Please use the "Snowflake.setMachineId()" method to specify a machine id before generating snowflakes.'
         );
 
-      if (timestamp instanceof Date) timestamp = timestamp.getTime();
+      const timestamp = Snowflake.getTimestamp(dateOrTimestamp);
 
       if (timestamp - epoch < 0)
         throw new Error(
@@ -104,7 +113,7 @@ export function generateSnowflake({
       const result =
         (BigInt(timestamp - epoch) <<
           BigInt(machineIdBitAmount + sequenceNumberBitAmount)) |
-        (MACHINE_ID << MACHINE_ID_SHIFT_AMOUNT) |
+        ((MACHINE_ID ?? 0n) << MACHINE_ID_SHIFT_AMOUNT) |
         INCREMENT;
 
       INCREMENT += 1n;
@@ -121,13 +130,13 @@ export function generateSnowflake({
       const timestampBits = timestamp.toString(2);
 
       const restBits = snowflakeBits.slice(timestampBits.length);
-      const machineIdBits = restBits.slice(0, machineIdBitAmount);
+      const machineIdBits = restBits.slice(0, machineIdBitAmount) || null;
       const incrementBits = restBits.slice(machineIdBitAmount);
 
       return {
         timestamp: Number(timestamp),
         date: new Date(epoch + Number(timestamp)),
-        machineId: parseInt(machineIdBits, 2),
+        machineId: machineIdBits === null ? null : parseInt(machineIdBits, 2),
         increment: parseInt(incrementBits, 2),
         timestampBits,
         machineIdBits,

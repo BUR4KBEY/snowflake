@@ -65,7 +65,7 @@ const testSnowflakeCase = ({
       sequenceNumberBitAmount
     );
     expect(deconstruct.machineIdBits).toStrictEqual(machineIdBits);
-    expect(deconstruct.machineIdBits.length).toStrictEqual(machineIdBitAmount);
+    expect(deconstruct.machineIdBits!.length).toStrictEqual(machineIdBitAmount);
     expect(deconstruct.timestampBits).toBe(timestampBits);
     expect(deconstruct.date).toStrictEqual(timestampDate);
     expect(deconstruct.increment).toStrictEqual(0);
@@ -173,7 +173,7 @@ describe('Snowflake', () => {
 
   it('should correctly verify the sequence number incrementation', () => {
     const sequenceNumberBitAmount = 12;
-    const maxSequenceNumber = 2 ** 12 - 1;
+    const maxSequenceNumber = 2 ** sequenceNumberBitAmount - 1;
     const Snowflake = generateSnowflake({
       epoch: EXAMPLE_EPOCH,
       machineIdBitAmount: 10,
@@ -196,6 +196,75 @@ describe('Snowflake', () => {
     expect(increment).toStrictEqual(0);
   });
 
+  it('should handle the case where machine id bit amount is 0', () => {
+    const Snowflake = generateSnowflake({
+      epoch: EXAMPLE_EPOCH,
+      machineIdBitAmount: 0,
+      sequenceNumberBitAmount: 2
+    });
+
+    expect(() => Snowflake.setMachineId(0)).toThrow();
+    expect(Snowflake.machineId).toStrictEqual(null);
+
+    const snowflake = Snowflake.generate();
+    const deconstruct = Snowflake.deconstruct(snowflake);
+
+    expect(deconstruct.machineId).toStrictEqual(null);
+    expect(deconstruct.machineIdBits).toStrictEqual(null);
+    expect(deconstruct.allBits).toStrictEqual(
+      deconstruct.timestampBits + deconstruct.incrementBits
+    );
+  });
+
+  it('should throw an error when trying to access the "Snowflake.machineId" property before setting one', () => {
+    const Snowflake = generateSnowflake({
+      epoch: EXAMPLE_EPOCH,
+      machineIdBitAmount: 2,
+      sequenceNumberBitAmount: 2
+    });
+
+    expect(() => Snowflake.machineId).toThrow();
+  });
+
+  it('should throw an error when the sequence number bit amount is 0', () => {
+    expect(() =>
+      generateSnowflake({
+        epoch: EXAMPLE_EPOCH,
+        machineIdBitAmount: 2,
+        sequenceNumberBitAmount: 0
+      })
+    ).toThrow();
+  });
+
+  it('should throw an error when the machine id exceeds the maximum allowed value', () => {
+    const machineIdBitAmount = 2;
+    const Snowflake = generateSnowflake({
+      epoch: EXAMPLE_EPOCH,
+      machineIdBitAmount,
+      sequenceNumberBitAmount: 2
+    });
+
+    expect(() => Snowflake.setMachineId(2 ** machineIdBitAmount)).toThrow();
+  });
+
+  it('should return the timestamp', () => {
+    const Snowflake = generateSnowflake({
+      epoch: EXAMPLE_EPOCH,
+      machineIdBitAmount: 10,
+      sequenceNumberBitAmount: 12
+    });
+
+    const now = new Date();
+
+    const t1 = Snowflake.getTimestamp(now);
+    const t2 = Snowflake.getTimestamp(now.getTime());
+
+    expect(t1).toBeNumber();
+    expect(t2).toBeNumber();
+    expect(t1).toStrictEqual(t2);
+    expect(t1).toStrictEqual(now.getTime());
+  });
+
   testSnowflakeCase({
     desc: 'should handle a machine id with the length of bits are equal to the machine id bit amount',
     machineId: 642,
@@ -206,7 +275,7 @@ describe('Snowflake', () => {
   testSnowflakeCase({
     desc: 'should handle a machine id with the length of bits are less than the machine id bit amount',
     machineId: 10,
-    machineIdBits: '0000001010', // 10 is 1010 in binary
+    machineIdBits: '0000001010', // Binary representation of 10 with 10 bits
     machineIdBitAmount: 10,
     sequenceNumberBitAmount: 12
   });
@@ -214,7 +283,7 @@ describe('Snowflake', () => {
   testSnowflakeCase({
     desc: 'should handle a machine id with bits less than the sequence number bits',
     machineId: 23,
-    machineIdBits: '10111', // 23 is 10111 in binary
+    machineIdBits: '10111', // Binary representation of 23 with 5 bits
     machineIdBitAmount: 5,
     sequenceNumberBitAmount: 16
   });
@@ -222,7 +291,7 @@ describe('Snowflake', () => {
   testSnowflakeCase({
     desc: 'should handle a machine id with bits greater than the sequence number bits',
     machineId: 143,
-    machineIdBits: '0000000010001111', // 143 is 0000000010001111 in binary
+    machineIdBits: '0000000010001111', // Binary representation of 143 with 16 bits
     machineIdBitAmount: 16,
     sequenceNumberBitAmount: 5
   });
@@ -230,7 +299,7 @@ describe('Snowflake', () => {
   testSnowflakeCase({
     desc: 'should handle a machine id with bits equal to the sequence number bits',
     machineId: 21043,
-    machineIdBits: '0101001000110011', // 21043 is 101001000110011 in binary
+    machineIdBits: '0101001000110011', // Binary representation of 21043 with 16 bits
     machineIdBitAmount: 16,
     sequenceNumberBitAmount: 16
   });
