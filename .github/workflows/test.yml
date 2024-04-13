@@ -24,5 +24,8 @@ jobs:
           version: 8
           run_install: true
 
+      - name: Run lint
+        run: pnpm lint
+
       - name: Run tests
         run: pnpm test
