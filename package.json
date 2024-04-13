@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rimraf dist && tsc -p .",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "prepare": "husky"
   },
