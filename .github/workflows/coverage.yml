@@ -1,9 +1,8 @@
 name: Deploy coverage report to pages
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [created]
 
 permissions:
   contents: read
