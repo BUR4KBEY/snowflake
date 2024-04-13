@@ -35,8 +35,8 @@ jobs:
           version: 8
           run_install: true
 
-      - name: Run coverage
-        run: pnpm test:coverage
+      - name: Run tests
+        run: pnpm test
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

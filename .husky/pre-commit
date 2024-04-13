@@ -1,1 +1,1 @@
-npx pretty-quick --staged && npm run lint && npm run test:coverage
+npx pretty-quick --staged && npm run lint && npm run test
