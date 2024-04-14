@@ -1,5 +1,5 @@
 ![NPM Version](https://img.shields.io/npm/v/%40burakbey%2Fsnowflake?style=for-the-badge&logo=npm&color=blue&cacheSeconds=3600&link=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2F%40burakbey%2Fsnowflake)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bur4kbey/snowflake/test.yml?style=for-the-badge&label=test&cacheSeconds=3600&link=https%3A%2F%2Fgithub.com%2FBUR4KBEY%2Fsnowflake%2Factions%2Fworkflows%2Ftest.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bur4kbey/snowflake/test.yml?style=for-the-badge&label=tests&cacheSeconds=3600&link=https%3A%2F%2Fgithub.com%2FBUR4KBEY%2Fsnowflake%2Factions%2Fworkflows%2Ftest.yml)
 ![Codecov](https://img.shields.io/codecov/c/github/bur4kbey/snowflake?style=for-the-badge&cacheSeconds=3600&link=https%3A%2F%2Fapp.codecov.io%2Fgh%2FBUR4KBEY%2Fsnowflake)
 ![GitHub License](https://img.shields.io/github/license/bur4kbey/snowflake?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FBUR4KBEY%2Fsnowflake%2Fblob%2Fmain%2FLICENSE)
 ![GitHub Repo stars](https://img.shields.io/github/stars/bur4kbey/snowflake?style=for-the-badge&label=%E2%AD%90%20STARS&color=yellow&cacheSeconds=3600&link=https%3A%2F%2Fgithub.com%2FBUR4KBEY%2Fsnowflake)
@@ -154,4 +154,4 @@ In this example, no bits are reserved for the machine id since only one process 
 
 ## 🧪 Code Coverage and Tests
 
-Tests are crucial for ensuring that the library functions as expected. You can review the latest code coverage report by visiting [**bur4kbey.github.io/snowflake**](https://bur4kbey.github.io/snowflake). The primary objective is to achieve complete coverage of the entire codebase through rigorous testing.
+Tests are crucial for ensuring that the library functions as expected. You can review the code coverage reports by visiting [**Codecov**](https://app.codecov.io/gh/BUR4KBEY/snowflake). The primary objective is to achieve complete coverage of the entire codebase through rigorous testing.
