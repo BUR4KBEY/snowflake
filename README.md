@@ -155,3 +155,9 @@ In this example, no bits are reserved for the machine id since only one process 
 ## 🧪 Code Coverage and Tests
 
 Tests are crucial for ensuring that the library functions as expected. You can review the code coverage reports by visiting [**Codecov**](https://app.codecov.io/gh/BUR4KBEY/snowflake). The primary objective is to achieve complete coverage of the entire codebase through rigorous testing.
+
+## ☕ Support
+
+If you find this project useful and would like to support [me](https://github.com/BUR4KBEY), you can do so by visiting [my website](https://burakbey.dev).
+
+<a href="https://burakbey.dev" target="_blank"><img src="https://burakbey.dev/github_support_snippet.png" style="height: 56px !important;width: 200px !important;" alt="Buy me a coffee"></img></a>
